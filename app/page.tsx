@@ -1,101 +1,161 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState } from "react";
+import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
+import { docco } from "react-syntax-highlighter/dist/cjs/styles/hljs";
+import { cn } from "./utils/cn";
+
+export default function App() {
+  const [code, setCode] = useState<string>("");
+  const [transformedCode, setTransformedCode] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const [currentVersion, setCurrentVersion] = useState<string>("2.5");
+
+  const handleTransform = (version: string): void => {
+    setCurrentVersion(version);
+    setLoading(true);
+    setTimeout(() => {
+      try {
+        const parsedJson = JSON.parse(code);
+        const transformed = {
+          ...parsedJson,
+          timestamp: new Date().toISOString(),
+        };
+        setTransformedCode(JSON.stringify(transformed, null, 2));
+      } catch {
+        setTransformedCode("Invalid JSON");
+      } finally {
+        setLoading(false);
+      }
+    }, 1000);
+  };
+
+  const handleCopy = (text: string): void => {
+    navigator.clipboard.writeText(text);
+    alert("Copied to clipboard!");
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+    <div className="flex flex-col items-center bg-gray-100 p-6 font-sans">
+      <h1 className="text-3xl font-bold uppercase text-gray-700 border-b-2 border-blue-500 pb-2 mb-8">
+        JSON Transformer Tool
+      </h1>
+      <div className="flex w-full bg-slate-400 justify-center">
+        <div className="flex flex-col w-1/2 bg-red-700 rounded-lg shadow-md border border-gray-300 p-4 h-[80vh]">
+          <div className="w-full bg-cyan-700 flex justify-between gap-2">
+            <button
+              onClick={() => handleTransform("2.5")}
+              className={cn(
+                "px-6 py-2 w-full bg-green-500 text-white font-semibold rounded shadow-md hover:bg-green-550 transition-all",
+                currentVersion === "2.5" ? "bg-green-600" : ""
+              )}
+            >
+              2.5 JSON
+            </button>
+            <div className="relative inline-block group w-full">
+              <button
+                onClick={() => handleTransform("3.0")}
+                disabled={(transformedCode.length === 0 || transformedCode == "Invalid JSON" )}
+                className={cn(
+                  "px-6 py-2 w-full bg-green-500 text-white font-semibold rounded shadow-md hover:bg-green-550 transition-all",
+                  currentVersion === "3.0" ? "bg-green-600" : "",
+                  (transformedCode.length === 0 || transformedCode == "Invalid JSON" )
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                )}
+              >
+                Transform to 3.0
+              </button>
+              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-[red] text-sm opacity-0 group-hover:opacity-100 transition-opacity w-full">
+                {(transformedCode.length === 0 || transformedCode == "Invalid JSON" )
+                  ? "Provide a valid JSON"
+                  : ""}
+              </div>
+            </div>
+          </div>
+          {currentVersion == "2.5" ? (
+            <textarea
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="Paste your JSON here..."
+              className="flex-1 bg-gray-100 text-sm font-mono text-gray-700 p-3 rounded border border-gray-300 outline-none resize-none focus:ring-2 focus:ring-blue-500"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          ) : (
+            <div
+              className="flex-1 bg-gray-100 resize-none text-sm font-mono text-gray-700 p-3 rounded border border-gray-300 overflow-auto relative"
+              style={{ maxHeight: "calc(100% - 2rem)", width: "100%" }}
+            >
+              {!loading && (
+                <button
+                  onClick={() => handleCopy(transformedCode)}
+                  className="absolute top-4 right-4 px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded shadow-md hover:bg-blue-600 transition-all"
+                >
+                  Copy
+                </button>
+              )}
+              {loading ? (
+                <div className="flex justify-center items-center h-full">
+                  <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              ) : (
+                <SyntaxHighlighter
+                  language="json"
+                  style={docco}
+                  customStyle={{
+                    fontSize: "14px",
+                    lineHeight: "1.5",
+                    wordWrap: "break-word",
+                    width: "100%",
+                  }}
+                >
+                  {transformedCode || "// Transformed JSON will appear here"}
+                </SyntaxHighlighter>
+              )}
+            </div>
+          )}
+          {/* <button
+            onClick={handleTransform}
+            className="mt-4 px-6 py-2 bg-green-500 text-white font-semibold rounded shadow-md hover:bg-green-600 transition-all"
           >
-            Read our docs
-          </a>
+            Transform JSON
+          </button> */}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        {/* <div className="flex flex-col w-1/2 bg-yellow-500 rounded-lg shadow-md border border-gray-300 p-4 relative h-[80vh]">
+          <h2 className="text-blue-500 font-semibold text-lg mb-4">
+            Transformed JSON{" "}
+            <span className="text-gray-500 text-sm">Version 3.0</span>
+          </h2>
+          <button
+            onClick={() => handleCopy(transformedCode)}
+            className="absolute top-4 right-4 px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded shadow-md hover:bg-blue-600 transition-all"
+          >
+            Copy
+          </button>
+          <div
+            className="flex-1 bg-gray-100 resize-none text-sm font-mono text-gray-700 p-3 rounded border border-gray-300 overflow-auto"
+            style={{ maxHeight: "calc(100% - 2rem)", width: "100%" }}
+          >
+            {loading ? (
+              <div className="flex justify-center items-center">
+                <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <SyntaxHighlighter
+                language="json"
+                style={docco}
+                customStyle={{
+                  fontSize: "14px",
+                  lineHeight: "1.5",
+                  wordWrap: "break-word",
+                  width: "100%",
+                }}
+              >
+                {transformedCode || "// Transformed JSON will appear here"}
+              </SyntaxHighlighter>
+            )}
+          </div>
+        </div> */}
+      </div>
     </div>
   );
 }
