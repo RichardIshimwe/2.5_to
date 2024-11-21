@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import { cn } from "./utils/cn";
+import { toast } from "sonner";
 
 export default function App() {
   const [code, setCode] = useState<string>("");
@@ -23,6 +24,10 @@ export default function App() {
         };
         setTransformedCode(JSON.stringify(transformed, null, 2));
       } catch {
+        toast.error(`Invalid JSON`, {
+          position: "top-right",
+        });
+        setCurrentVersion("2.5");
         setTransformedCode("Invalid JSON");
       } finally {
         setLoading(false);
@@ -37,90 +42,91 @@ export default function App() {
 
   return (
     <div className="flex flex-col items-center bg-gray-100 p-6 font-sans">
-      <h1 className="text-3xl font-bold uppercase text-gray-700 border-b-2 border-blue-500 pb-2 mb-8">
+      <h1 className="text-3xl font-bold uppercase text-gray-700 border-b-2  pb-2 mb-8">
         JSON Transformer Tool
       </h1>
-      <div className="flex w-full bg-slate-400 justify-center">
-        <div className="flex flex-col w-1/2 bg-red-700 rounded-lg shadow-md border border-gray-300 p-4 h-[80vh]">
-          <div className="w-full bg-cyan-700 flex justify-between gap-2">
-            <button
-              onClick={() => handleTransform("2.5")}
-              className={cn(
-                "px-6 py-2 w-full bg-green-500 text-white font-semibold rounded shadow-md hover:bg-green-550 transition-all",
-                currentVersion === "2.5" ? "bg-green-600" : ""
-              )}
-            >
-              2.5 JSON
-            </button>
-            <div className="relative inline-block group w-full">
+      <div className="w-full flex">
+        <div className="bg-red-500 w-[30%]">
+          <div className="bg-teal-600">
+            <p className="text-gray-700 text-lg mb-4">Missing components</p>
+          </div>
+          <div className="bg-teal-600">
+            <p className="text-gray-700 text-lg mb-4">Missing components</p>
+          </div>
+          <div className="bg-teal-600">
+            <p className="text-gray-700 text-lg mb-4">All com components</p>
+          </div>
+        </div>
+        <div className="flex bg-lime-800  justify-center w-[70%]">
+          <div className="flex flex-col w-[80%] rounded-lg shadow-md border border-gray-300 p-4 h-[80vh]">
+            <div className="w-full  flex justify-between gap-2 p-2 border border-green-500 rounded-md">
+              <button
+                onClick={() => handleTransform("2.5")}
+                className={cn(
+                  "px-6 py-2 w-full text-green-600  font-semibold rounded hover:bg-green-550 transition-all",
+                  currentVersion === "2.5" ? "bg-green-600 text-white" : ""
+                )}
+              >
+                2.5 JSON
+              </button>
               <button
                 onClick={() => handleTransform("3.0")}
-                disabled={(transformedCode.length === 0 || transformedCode == "Invalid JSON" )}
                 className={cn(
-                  "px-6 py-2 w-full bg-green-500 text-white font-semibold rounded shadow-md hover:bg-green-550 transition-all",
-                  currentVersion === "3.0" ? "bg-green-600" : "",
-                  (transformedCode.length === 0 || transformedCode == "Invalid JSON" )
-                    ? "opacity-50 cursor-not-allowed"
-                    : ""
+                  "px-6 py-2 w-full text-green-600 font-semibold rounded hover:bg-green-550 transition-all",
+                  currentVersion === "3.0" ? "bg-green-600 text-white" : ""
                 )}
               >
                 Transform to 3.0
               </button>
-              <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 text-[red] text-sm opacity-0 group-hover:opacity-100 transition-opacity w-full">
-                {(transformedCode.length === 0 || transformedCode == "Invalid JSON" )
-                  ? "Provide a valid JSON"
-                  : ""}
+            </div>
+            {currentVersion == "2.5" ? (
+              <textarea
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                placeholder="Paste your JSON here..."
+                className="flex-1 bg-gray-100 text-sm font-mono text-gray-700 p-3 rounded border border-gray-300 outline-none resize-none focus:ring-2 focus:ring-blue-500"
+              />
+            ) : (
+              <div
+                className="flex-1 bg-gray-100 resize-none text-sm font-mono text-gray-700 p-3 rounded border border-gray-300 overflow-auto relative"
+                style={{ maxHeight: "calc(100% - 2rem)", width: "100%" }}
+              >
+                {!loading && (
+                  <button
+                    onClick={() => handleCopy(transformedCode)}
+                    className="absolute top-4 right-4 px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded shadow-md hover:bg-blue-600 transition-all"
+                  >
+                    Copy
+                  </button>
+                )}
+                {loading ? (
+                  <div className="flex justify-center items-center h-full">
+                    <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : (
+                  <SyntaxHighlighter
+                    language="json"
+                    style={docco}
+                    customStyle={{
+                      fontSize: "14px",
+                      lineHeight: "1.5",
+                      wordWrap: "break-word",
+                      width: "100%",
+                    }}
+                  >
+                    {transformedCode || "// Transformed JSON will appear here"}
+                  </SyntaxHighlighter>
+                )}
               </div>
-            </div>
-          </div>
-          {currentVersion == "2.5" ? (
-            <textarea
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="Paste your JSON here..."
-              className="flex-1 bg-gray-100 text-sm font-mono text-gray-700 p-3 rounded border border-gray-300 outline-none resize-none focus:ring-2 focus:ring-blue-500"
-            />
-          ) : (
-            <div
-              className="flex-1 bg-gray-100 resize-none text-sm font-mono text-gray-700 p-3 rounded border border-gray-300 overflow-auto relative"
-              style={{ maxHeight: "calc(100% - 2rem)", width: "100%" }}
-            >
-              {!loading && (
-                <button
-                  onClick={() => handleCopy(transformedCode)}
-                  className="absolute top-4 right-4 px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded shadow-md hover:bg-blue-600 transition-all"
-                >
-                  Copy
-                </button>
-              )}
-              {loading ? (
-                <div className="flex justify-center items-center h-full">
-                  <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                </div>
-              ) : (
-                <SyntaxHighlighter
-                  language="json"
-                  style={docco}
-                  customStyle={{
-                    fontSize: "14px",
-                    lineHeight: "1.5",
-                    wordWrap: "break-word",
-                    width: "100%",
-                  }}
-                >
-                  {transformedCode || "// Transformed JSON will appear here"}
-                </SyntaxHighlighter>
-              )}
-            </div>
-          )}
-          {/* <button
+            )}
+            {/* <button
             onClick={handleTransform}
             className="mt-4 px-6 py-2 bg-green-500 text-white font-semibold rounded shadow-md hover:bg-green-600 transition-all"
           >
             Transform JSON
           </button> */}
-        </div>
-        {/* <div className="flex flex-col w-1/2 bg-yellow-500 rounded-lg shadow-md border border-gray-300 p-4 relative h-[80vh]">
+          </div>
+          {/* <div className="flex flex-col w-1/2 bg-yellow-500 rounded-lg shadow-md border border-gray-300 p-4 relative h-[80vh]">
           <h2 className="text-blue-500 font-semibold text-lg mb-4">
             Transformed JSON{" "}
             <span className="text-gray-500 text-sm">Version 3.0</span>
@@ -155,6 +161,7 @@ export default function App() {
             )}
           </div>
         </div> */}
+        </div>
       </div>
     </div>
   );
