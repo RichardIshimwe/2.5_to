@@ -1,9 +1,12 @@
+import { Block, TransformedTextSection } from "@/app/types";
 import { Type30 } from "@/app/utils/enum/3.0";
 
-export const transformTextSection = (inputField: TextInputField): TransformedTextSection => ({
+export const transformTextSection = (
+  inputField: Block
+): TransformedTextSection => ({
   key: inputField.key,
   id: `formly_${Math.random().toString(36).substring(7)}_${inputField.key}_0`,
-  type: Type30.BLOCK, // Using the 3.0 type
+  type: Type30.BLOCK,
   props: {
     label: inputField.templateOptions?.label || "Text Section",
     placeholder: "",

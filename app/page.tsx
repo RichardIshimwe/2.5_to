@@ -6,9 +6,10 @@ import { docco } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import { cn } from "./utils/cn";
 import ComponentsStatuses from "./components/components_statuses";
 import { toast } from "sonner";
+import { Transform25To30 } from "./utils/transformer/transform25To30";
 
 export default function App() {
-  const [code, setCode] = useState<string>("");
+  const [json, setCode] = useState<string>("");
   const [transformedCode, setTransformedCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [currentVersion, setCurrentVersion] = useState<string>("2.5");
@@ -19,14 +20,20 @@ export default function App() {
     setLoading(true);
     setTimeout(() => {
       try {
-        const parsedJson = JSON.parse(code);
-        const transformed = {
-          ...parsedJson,
-          timestamp: new Date().toISOString(),
-        };
+        console.log("original json : ",json);
+        const parsedJson = JSON.parse(json);
+        console.log("Parsed Json : ",parsedJson);
+        // const transformed = {
+        //   ...parsedJson,
+        //   timestamp: new Date().toISOString(),
+        // };
+        const transformedJson = Transform25To30(parsedJson);
+        console.log("Transformed Json : ",transformedJson);
         setSections(parsedJson.fields.length);
-        setTransformedCode(JSON.stringify(transformed, null, 2));
-      } catch {
+        setTransformedCode(JSON.stringify(transformedJson, null, 2));
+        // setTransformedCode(JSON.stringify(transformed, null, 2));
+      } catch (error) {
+        console.error("Error occuring : ", error);
         toast.error(`Invalid JSON`, {
           position: "top-right",
         });
@@ -54,7 +61,7 @@ export default function App() {
           <div className="flex flex-col w-[80%] rounded-lg shadow-md border border-gray-300 p-4 h-[80vh]">
             <div className="w-full  flex justify-between gap-2 p-2 border border-green-500 rounded-md">
               <button
-                onClick={() => handleTransform("2.5")}
+                onClick={() => setCurrentVersion("2.5")}
                 className={cn(
                   "px-6 py-2 w-full text-green-600  font-semibold rounded hover:bg-green-550 transition-all",
                   currentVersion === "2.5" ? "bg-green-600 text-white" : ""
@@ -74,7 +81,7 @@ export default function App() {
             </div>
             {currentVersion == "2.5" ? (
               <textarea
-                value={code}
+                value={json}
                 onChange={(e) => setCode(e.target.value)}
                 placeholder="Paste your JSON here..."
                 className="flex-1 bg-gray-100 text-sm font-mono text-gray-700 p-3 rounded border border-gray-300 outline-none resize-none focus:ring-2 focus:ring-blue-500"
