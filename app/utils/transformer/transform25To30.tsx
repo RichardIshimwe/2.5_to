@@ -3,7 +3,6 @@ import { transformField } from "./transformFields";
 
 export const Transform25To30 = (json25: Form25) => {
   try {
-    // Return the transformed fields
     return {
       fields: json25.fields.map((section: Section) => {
         return {
