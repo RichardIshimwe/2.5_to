@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Light as SyntaxHighlighter } from "react-syntax-highlighter";
 import { docco } from "react-syntax-highlighter/dist/cjs/styles/hljs";
 import { cn } from "./utils/cn";
+import ComponentsStatuses from "./components/components_statuses";
 import { toast } from "sonner";
 
 export default function App() {
@@ -11,6 +12,7 @@ export default function App() {
   const [transformedCode, setTransformedCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [currentVersion, setCurrentVersion] = useState<string>("2.5");
+  const [sections, setSections] = useState<number>(0);
 
   const handleTransform = (version: string): void => {
     setCurrentVersion(version);
@@ -22,6 +24,7 @@ export default function App() {
           ...parsedJson,
           timestamp: new Date().toISOString(),
         };
+        setSections(parsedJson.fields.length);
         setTransformedCode(JSON.stringify(transformed, null, 2));
       } catch {
         toast.error(`Invalid JSON`, {
@@ -42,22 +45,12 @@ export default function App() {
 
   return (
     <div className="flex flex-col items-center bg-gray-100 p-6 font-sans">
-      <h1 className="text-3xl font-bold uppercase text-gray-700 border-b-2  pb-2 mb-8">
-        JSON Transformer Tool
+      <h1 className="text-2xl font-extrabold uppercase text-gray-700 border-b-2 mb-10">
+        2.5 to 3.0 Tool
       </h1>
       <div className="w-full flex">
-        <div className="bg-red-500 w-[30%]">
-          <div className="bg-teal-600">
-            <p className="text-gray-700 text-lg mb-4">Missing components</p>
-          </div>
-          <div className="bg-teal-600">
-            <p className="text-gray-700 text-lg mb-4">Missing components</p>
-          </div>
-          <div className="bg-teal-600">
-            <p className="text-gray-700 text-lg mb-4">All com components</p>
-          </div>
-        </div>
-        <div className="flex bg-lime-800  justify-center w-[70%]">
+        <ComponentsStatuses sections={sections} />
+        <div className="flex justify-center w-[70%]">
           <div className="flex flex-col w-[80%] rounded-lg shadow-md border border-gray-300 p-4 h-[80vh]">
             <div className="w-full  flex justify-between gap-2 p-2 border border-green-500 rounded-md">
               <button
