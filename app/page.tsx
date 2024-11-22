@@ -47,7 +47,9 @@ export default function App() {
 
   const handleCopy = (text: string): void => {
     navigator.clipboard.writeText(text);
-    alert("Copied to clipboard!");
+    toast.success(`Copied to clipboard!`, {
+      position: "top-right",
+    });
   };
 
   return (

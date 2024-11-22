@@ -156,4 +156,5 @@ export type Section = {
   fieldGroup: Field[];
   templateOptions?: TemplateOptions;
   fieldGroupClassName?: string;
+  others: number[];
 };

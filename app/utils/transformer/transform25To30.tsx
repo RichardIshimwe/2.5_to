@@ -2,13 +2,26 @@ import { AllFields, Form25, Section } from "@/app/types";
 import { transformField } from "./transformFields";
 
 export const Transform25To30 = (json25: Form25) => {
-    console.log("inputed json in transformer : ",json25);
-    try {
+  try {
+    // Return the transformed fields
+    return {
+      fields: json25.fields.map((section: Section) => {
         return {
-            fields: json25.fields.map((section: Section) => section.fieldGroup.map((field) =>  transformField(field as AllFields))),
+          id: section.key,
+          type: "sections",
+          props: {},
+          expressions: {},
+          validation: {
+            messages: {},
+          },
+          validators: {},
+          fieldGroup: section.fieldGroup.map((field) =>
+            transformField(field as AllFields)
+          ),
         };
-    } catch {
-        throw new Error(`Invalid 2.5 JSON`);
-    }
-  };
-  
+      }),
+    };
+  } catch {
+    throw new Error(`Invalid 2.5 JSON`);
+  }
+};
