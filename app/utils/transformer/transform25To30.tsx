@@ -43,7 +43,6 @@ export const Transform25To30 = (
                 skippedCompones: [],
               },
             ]);
-
             sectionKeys.push(currentSectionName as string);
             return {
               key: section.key,
