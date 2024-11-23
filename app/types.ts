@@ -97,6 +97,8 @@ export interface TemplateOptions {
   identificationType?: string;
   placeholder?: string;
   fetchedPropertiesToPrefill?: FetchedProperty[];
+  icon?: string;
+  label?: string;
 }
 
 export interface NidInputField {
