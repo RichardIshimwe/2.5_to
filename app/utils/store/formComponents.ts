@@ -6,24 +6,24 @@ export interface modifiedComponentType {
 }
 
 export interface sectionType {
-    name: string;
-    transformedCompones: modifiedComponentType[];
-    skippedCompones: modifiedComponentType[];
+  name: string;
+  transformedCompones: modifiedComponentType[];
+  skippedCompones: modifiedComponentType[];
 }
 
 export interface formComponentsType {
   sections: sectionType[];
   setSections: (
-    sections: {
-      name: string;
-      transformedCompones: modifiedComponentType[];
-      skippedCompones: modifiedComponentType[];
-    }[]
+    updater: (
+      prevSections: sectionType[]
+    ) => sectionType[]
   ) => void;
 }
 
 export const FormComponents = create<formComponentsType>((set) => ({
   sections: [],
-  setSections: (newSections) =>
-    set((state) => ({ sections: [...state.sections, ...newSections] })),
+  setSections: (updater) =>
+    set((state) => ({
+      sections: updater(state.sections),
+    })),
 }));

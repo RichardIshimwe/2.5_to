@@ -5,19 +5,19 @@ import { GetSectionName } from "./getTranslation";
 export const Transform25To30 = (
   json25: Form25,
   setSections: (
-    sections: {
+    updater: (
+      prevSections: {
+        name: string;
+        transformedCompones: { type: string; count: number }[];
+        skippedCompones: { type: string; count: number }[];
+      }[]
+    ) => {
       name: string;
       transformedCompones: { type: string; count: number }[];
       skippedCompones: { type: string; count: number }[];
     }[]
-  ) => void,
-  sections: {
-    name: string;
-    transformedCompones: { type: string; count: number }[];
-    skippedCompones: { type: string; count: number }[];
-  }[]
+  ) => void
 ) => {
-  const sectionKeys: string[] = [];
   try {
     return {
       fields: [
@@ -33,17 +33,28 @@ export const Transform25To30 = (
           fieldGroup: json25.fields.map((section: Section) => {
             const currentSectionName =
               section.templateOptions?.label !== null
-                ? section.templateOptions?.label
+                ? section.templateOptions?.label || ""
                 : GetSectionName(section.key);
-            setSections([
-              ...sections,
-              {
-                name: currentSectionName as string,
-                transformedCompones: [],
-                skippedCompones: [],
-              },
-            ]);
-            sectionKeys.push(currentSectionName as string);
+
+            setSections((prevSections) => {
+              const sectionExists = prevSections.some(
+                (existingSection) => existingSection.name === currentSectionName
+              );
+
+              if (!sectionExists) {
+                return [
+                  ...prevSections,
+                  {
+                    name: currentSectionName,
+                    transformedCompones: [],
+                    skippedCompones: [],
+                  },
+                ];
+              }
+
+              return prevSections;
+            });
+
             return {
               key: section.key,
               id: `formly_${section.key}`,
@@ -63,12 +74,8 @@ export const Transform25To30 = (
         },
       ],
     };
-  } catch {
+  } catch (error) {
+    console.error("Error transforming JSON: ", error);
     throw new Error(`Invalid 2.5 JSON`);
-  } finally {
-    console.log("Finally");
-    console.log("all sections before sending to store");
-    console.log("current sections keys: ", sectionKeys);
-    console.log("sections in store: ", sections);
   }
 };

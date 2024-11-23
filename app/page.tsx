@@ -14,18 +14,21 @@ export default function App() {
   const [transformedCode, setTransformedCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [currentVersion, setCurrentVersion] = useState<string>("2.5");
-  const { setSections, sections } = FormComponents();
+  const { setSections } = FormComponents();
 
   const handleTransform = (version: string): void => {
     setCurrentVersion(version);
     setLoading(true);
     setTimeout(() => {
       try {
-        console.log("original json : ",json);
+        console.log("original json : ", json);
         const parsedJson = JSON.parse(json);
-        console.log("Parsed Json : ",parsedJson);
-        const transformedJson = Transform25To30(parsedJson, setSections, sections);
-        console.log("Transformed Json : ",transformedJson);
+        console.log("Parsed Json : ", parsedJson);
+        const transformedJson = Transform25To30(
+          parsedJson,
+          setSections
+        );
+        console.log("Transformed Json : ", transformedJson);
         setTransformedCode(JSON.stringify(transformedJson, null, 2));
       } catch (error) {
         console.error("Error occuring : ", error);
@@ -58,7 +61,9 @@ export default function App() {
           <div className="flex flex-col w-[80%] rounded-lg shadow-md border border-gray-300 p-4 h-[80vh]">
             <div className="w-full  flex justify-between gap-2 p-2 border border-green-500 rounded-md">
               <button
-                onClick={() => setCurrentVersion("2.5")}
+                onClick={() => {
+                  setCurrentVersion("2.5");
+                }}
                 className={cn(
                   "px-6 py-2 w-full text-green-600  font-semibold rounded hover:bg-green-550 transition-all",
                   currentVersion === "2.5" ? "bg-green-600 text-white" : ""
@@ -67,7 +72,9 @@ export default function App() {
                 2.5 JSON
               </button>
               <button
-                onClick={() => handleTransform("3.0")}
+                onClick={() => {
+                  handleTransform("3.0");
+                }}
                 className={cn(
                   "px-6 py-2 w-full text-green-600 font-semibold rounded hover:bg-green-550 transition-all",
                   currentVersion === "3.0" ? "bg-green-600 text-white" : ""
