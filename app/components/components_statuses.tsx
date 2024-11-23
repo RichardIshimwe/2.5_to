@@ -1,12 +1,8 @@
 import React from "react";
+import { FormComponents } from "../utils/store/formComponents";
 
-interface ComponentsStatusesProps {
-  sections: number;
-}
-
-const ComponentsStatuses: React.FC<ComponentsStatusesProps> = ({
-  sections,
-}) => {
+const ComponentsStatuses = () => {
+  const { sections } = FormComponents();
   return (
     <div className="w-[30%] border border-gray-700 rounded-md">
       <div className="flex items-center justify-between py-2 px-2 border border-b-gray-700">
@@ -18,12 +14,13 @@ const ComponentsStatuses: React.FC<ComponentsStatusesProps> = ({
         </div>
       </div>
       <div className="p-4">
-        {Array.from({ length: sections }).map((_, index) => (
-          <div key={index} className="mb-6">
-            <p className="text-neutral-500 font-bold">Section {index + 1}</p>
-            <div className="p-3 w-3/4 border-b border-b-gray-700 mx-auto text-center"></div>
-          </div>
-        ))}
+        {sections.length > 0 &&
+          sections.map((name, index) => (
+            <div key={index} className="mb-6">
+              <p className="text-neutral-500 font-bold">{name}</p>
+              <div className="p-3 w-3/4 border-b border-b-gray-700 mx-auto text-center"></div>
+            </div>
+          ))}
       </div>
     </div>
   );

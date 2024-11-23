@@ -7,13 +7,14 @@ import { cn } from "./utils/cn";
 import ComponentsStatuses from "./components/components_statuses";
 import { toast } from "sonner";
 import { Transform25To30 } from "./utils/transformer/transform25To30";
+import { FormComponents } from "./utils/store/formComponents";
 
 export default function App() {
   const [json, setCode] = useState<string>("");
   const [transformedCode, setTransformedCode] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [currentVersion, setCurrentVersion] = useState<string>("2.5");
-  const [sections, setSections] = useState<number>(0);
+  const { setSections, sections } = FormComponents();
 
   const handleTransform = (version: string): void => {
     setCurrentVersion(version);
@@ -23,15 +24,9 @@ export default function App() {
         console.log("original json : ",json);
         const parsedJson = JSON.parse(json);
         console.log("Parsed Json : ",parsedJson);
-        // const transformed = {
-        //   ...parsedJson,
-        //   timestamp: new Date().toISOString(),
-        // };
-        const transformedJson = Transform25To30(parsedJson);
+        const transformedJson = Transform25To30(parsedJson, setSections, sections);
         console.log("Transformed Json : ",transformedJson);
-        setSections(parsedJson.fields.length);
         setTransformedCode(JSON.stringify(transformedJson, null, 2));
-        // setTransformedCode(JSON.stringify(transformed, null, 2));
       } catch (error) {
         console.error("Error occuring : ", error);
         toast.error(`Invalid JSON`, {
@@ -58,7 +53,7 @@ export default function App() {
         2.5 to 3.0 Tool
       </h1>
       <div className="w-full flex">
-        <ComponentsStatuses sections={sections} />
+        <ComponentsStatuses />
         <div className="flex justify-center w-[70%]">
           <div className="flex flex-col w-[80%] rounded-lg shadow-md border border-gray-300 p-4 h-[80vh]">
             <div className="w-full  flex justify-between gap-2 p-2 border border-green-500 rounded-md">
