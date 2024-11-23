@@ -24,10 +24,7 @@ export default function App() {
         console.log("original json : ", json);
         const parsedJson = JSON.parse(json);
         console.log("Parsed Json : ", parsedJson);
-        const transformedJson = Transform25To30(
-          parsedJson,
-          setSections
-        );
+        const transformedJson = Transform25To30(parsedJson, setSections);
         console.log("Transformed Json : ", transformedJson);
         setTransformedCode(JSON.stringify(transformedJson, null, 2));
       } catch (error) {
@@ -56,12 +53,13 @@ export default function App() {
         2.5 to 3.0 Tool
       </h1>
       <div className="w-full flex">
-        <ComponentsStatuses />
+        <ComponentsStatuses isLoading={loading} />
         <div className="flex justify-center w-[70%]">
           <div className="flex flex-col w-[80%] rounded-lg shadow-md border border-gray-300 p-4 h-[80vh]">
             <div className="w-full  flex justify-between gap-2 p-2 border border-green-500 rounded-md">
               <button
                 onClick={() => {
+                  setSections(() => []);
                   setCurrentVersion("2.5");
                 }}
                 className={cn(
@@ -73,6 +71,7 @@ export default function App() {
               </button>
               <button
                 onClick={() => {
+                  setSections(() => []);
                   handleTransform("3.0");
                 }}
                 className={cn(
@@ -92,36 +91,38 @@ export default function App() {
               />
             ) : (
               <div
-                className="flex-1 bg-gray-100 resize-none text-sm font-mono text-gray-700 p-3 rounded border border-gray-300 overflow-auto relative"
-                style={{ maxHeight: "calc(100% - 2rem)", width: "100%" }}
-              >
-                {!loading && (
-                  <button
-                    onClick={() => handleCopy(transformedCode)}
-                    className="absolute top-4 right-4 px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded shadow-md hover:bg-blue-600 transition-all"
-                  >
-                    Copy
-                  </button>
-                )}
-                {loading ? (
-                  <div className="flex justify-center items-center h-full">
-                    <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                  </div>
-                ) : (
-                  <SyntaxHighlighter
-                    language="json"
-                    style={docco}
-                    customStyle={{
-                      fontSize: "14px",
-                      lineHeight: "1.5",
-                      wordWrap: "break-word",
-                      width: "100%",
-                    }}
-                  >
-                    {transformedCode || "// Transformed JSON will appear here"}
-                  </SyntaxHighlighter>
-                )}
-              </div>
+              className="flex-1 bg-gray-100 resize-none text-sm font-mono text-gray-700 p-3 rounded border border-gray-300 overflow-auto relative"
+              style={{ maxHeight: "calc(100% - 2rem)", width: "100%" }}
+            >
+              {!loading && (
+                <button
+                  onClick={() => handleCopy(transformedCode)}
+                  className="sticky right-4 px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded shadow-md hover:bg-blue-600 transition-all"
+                  style={{ float: "right" }}
+                >
+                  Copy
+                </button>
+              )}
+              {loading ? (
+                <div className="flex justify-center items-center h-full">
+                  <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              ) : (
+                <SyntaxHighlighter
+                  language="json"
+                  style={docco}
+                  customStyle={{
+                    fontSize: "14px",
+                    lineHeight: "1.5",
+                    wordWrap: "break-word",
+                    width: "100%",
+                  }}
+                >
+                  {transformedCode || "// Transformed JSON will appear here"}
+                </SyntaxHighlighter>
+              )}
+            </div>
+            
             )}
             {/* <button
             onClick={handleTransform}

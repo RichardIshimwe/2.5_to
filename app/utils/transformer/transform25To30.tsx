@@ -8,13 +8,13 @@ export const Transform25To30 = (
     updater: (
       prevSections: {
         name: string;
-        transformedCompones: { type: string; count: number }[];
-        skippedCompones: { type: string; count: number }[];
+        transformedComponents: { type: string; count: number }[];
+        skippedComponents: { type: string; count: number }[];
       }[]
     ) => {
       name: string;
-      transformedCompones: { type: string; count: number }[];
-      skippedCompones: { type: string; count: number }[];
+      transformedComponents: { type: string; count: number }[];
+      skippedComponents: { type: string; count: number }[];
     }[]
   ) => void
 ) => {
@@ -46,8 +46,8 @@ export const Transform25To30 = (
                   ...prevSections,
                   {
                     name: currentSectionName,
-                    transformedCompones: [],
-                    skippedCompones: [],
+                    transformedComponents: [],
+                    skippedComponents: [],
                   },
                 ];
               }
@@ -67,7 +67,7 @@ export const Transform25To30 = (
               expressions: null,
               validation: null,
               fieldGroup: section.fieldGroup.map((field) =>
-                transformField(field as AllFields)
+                transformField(field as AllFields, setSections, currentSectionName)
               ),
             };
           }),

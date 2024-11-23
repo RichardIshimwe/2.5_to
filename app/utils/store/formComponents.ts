@@ -7,16 +7,14 @@ export interface modifiedComponentType {
 
 export interface sectionType {
   name: string;
-  transformedCompones: modifiedComponentType[];
-  skippedCompones: modifiedComponentType[];
+  transformedComponents: modifiedComponentType[];
+  skippedComponents: modifiedComponentType[];
 }
 
 export interface formComponentsType {
   sections: sectionType[];
   setSections: (
-    updater: (
-      prevSections: sectionType[]
-    ) => sectionType[]
+    updater: (prevSections: sectionType[]) => sectionType[]
   ) => void;
 }
 
