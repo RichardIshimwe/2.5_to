@@ -15,10 +15,58 @@ const ComponentsStatuses = () => {
       </div>
       <div className="p-4">
         {sections.length > 0 &&
-          sections.map((name, index) => (
-            <div key={index} className="mb-6">
-              <p className="text-neutral-500 font-bold">{name}</p>
-              <div className="p-3 w-3/4 border-b border-b-gray-700 mx-auto text-center"></div>
+          sections.map((currentSection, index) => (
+            <div
+              key={index}
+              className="p-2 border border-gray-700 mb-4 rounded-md"
+            >
+              <p className="text-neutral-500 font-bold">
+                {currentSection.name}
+              </p>
+              <div className="">
+                <p className="text-green-700 font-bold">Transformed</p>
+                <div className="flex gap-1">
+                  {currentSection.transformedCompones.length > 0 ? (
+                    currentSection.transformedCompones.map(
+                      (component, index) => (
+                        <div
+                          key={index}
+                          className="inline-flex items-center text-sm text-green-700 font-semibold bg-green-20/80 border border-green-700 rounded-md px-1"
+                        >
+                          <p className="mr-1">{component.type}</p>
+                          <p className="bg-green-950 text-white px-[4px] rounded-full my-1">
+                            {component.count}
+                          </p>
+                        </div>
+                      )
+                    )
+                  ) : (
+                    <p className="text-black text-sm">
+                      no component transformed double check your JSON
+                    </p>
+                  )}
+                </div>
+                <p className="text-amber-900 font-bold">Skipped</p>
+                <div className="flex gap-1">
+                  {currentSection.skippedCompones.length > 0 ? (
+                    currentSection.skippedCompones.map((component, index) => (
+                      <div
+                        key={index}
+                        className="inline-flex items-center text-sm text-amber-900 font-semibold bg-green-20/80 border border-amber-900 rounded-md px-1"
+                      >
+                        <p className="mr-1">{component.type}</p>
+                        <p className="bg-amber-950 text-white px-[4px] rounded-full my-1">
+                          {component.count}
+                        </p>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-black text-sm">
+                      all components are transformed :white_check_mark:
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           ))}
       </div>

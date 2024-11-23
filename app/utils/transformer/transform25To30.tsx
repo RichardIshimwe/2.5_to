@@ -4,8 +4,18 @@ import { GetSectionName } from "./getTranslation";
 
 export const Transform25To30 = (
   json25: Form25,
-  setSections: (sections: string[]) => void,
-  sections: string[]
+  setSections: (
+    sections: {
+      name: string;
+      transformedCompones: { type: string; count: number }[];
+      skippedCompones: { type: string; count: number }[];
+    }[]
+  ) => void,
+  sections: {
+    name: string;
+    transformedCompones: { type: string; count: number }[];
+    skippedCompones: { type: string; count: number }[];
+  }[]
 ) => {
   const sectionKeys: string[] = [];
   try {
@@ -25,9 +35,16 @@ export const Transform25To30 = (
               section.templateOptions?.label !== null
                 ? section.templateOptions?.label
                 : GetSectionName(section.key);
-            console.log("currentSectionName", currentSectionName);
+            setSections([
+              ...sections,
+              {
+                name: currentSectionName as string,
+                transformedCompones: [],
+                skippedCompones: [],
+              },
+            ]);
+
             sectionKeys.push(currentSectionName as string);
-            // setSections([...sections, currentSectionName as string]);
             return {
               key: section.key,
               id: `formly_${section.key}`,
@@ -53,7 +70,6 @@ export const Transform25To30 = (
     console.log("Finally");
     console.log("all sections before sending to store");
     console.log("current sections keys: ", sectionKeys);
-    console.log("sectins in store: ", sections);
-    setSections([...sections, ...sectionKeys]);
+    console.log("sections in store: ", sections);
   }
 };
