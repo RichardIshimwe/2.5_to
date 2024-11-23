@@ -13,33 +13,38 @@ export const transformField = (
   currentSectionName: string
 ) => {
   console.log("field 1:1 : ", field);
-  setSections((prevSections) => {
-    return prevSections.map((section) => {
-      if (section.name === currentSectionName) {
-        const existingIndex = section.transformedComponents.findIndex(
-          (component) => component.type === field.type
-        );
-        if (existingIndex !== -1) {
-          const updatedComponents = [...section.transformedComponents];
-          updatedComponents[existingIndex].count += 1;
 
-          return {
-            ...section,
-            transformedComponents: updatedComponents,
-          };
-        } else {
-          return {
-            ...section,
-            transformedComponents: [
-              ...section.transformedComponents,
-              { type: field.type, count: 1 },
-            ],
-          };
+  const isFieldTypeValid = Object.values(Type25).includes(field.type as Type25);
+
+  if (isFieldTypeValid) {
+    setSections((prevSections) => {
+      return prevSections.map((section) => {
+        if (section.name === currentSectionName) {
+          const existingIndex = section.transformedComponents.findIndex(
+            (component) => component.type === field.type
+          );
+          if (existingIndex !== -1) {
+            const updatedComponents = [...section.transformedComponents];
+            updatedComponents[existingIndex].count += 1;
+
+            return {
+              ...section,
+              transformedComponents: updatedComponents,
+            };
+          } else {
+            return {
+              ...section,
+              transformedComponents: [
+                ...section.transformedComponents,
+                { type: field.type, count: 1 },
+              ],
+            };
+          }
         }
-      }
-      return section;
+        return section;
+      });
     });
-  });
+  }
 
   switch (field.type) {
     case Type25.CUSTOM_INPUT:
@@ -58,7 +63,7 @@ export const transformField = (
             if (existingIndex !== -1) {
               const updatedComponents = [...section.skippedComponents];
               updatedComponents[existingIndex].count += 1;
-    
+
               return {
                 ...section,
                 skippedComponents: updatedComponents,
@@ -77,6 +82,6 @@ export const transformField = (
         });
       });
       console.log("this field is not found : ", field);
-      // throw new Error(`Field type ${field.type} not supported`);
+    // throw new Error(`Field type ${field.type} not supported`);
   }
 };
