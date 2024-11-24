@@ -1,9 +1,17 @@
 import { Type25 } from "../enum/2.5";
 import { transformCustomInput } from "../../components/platform components/Custom Input/CustomInput";
 import { transformCustomSelect } from "@/app/components/platform components/Custom select/transformCustomSelect";
+import { transformDateField } from "@/app/components/platform components/Custom Date/CustomDate";
 import { transformNidFetch } from "../../components/platform components/Nid Fetch/NidFetch";
 import { transformTextSection } from "../../components/platform components/Text Section/TextSection";
-import { CustomInputField, NidInputField, Block, AllFields, CustomSelect } from "../../types";
+import {
+  CustomInputField,
+  NidInputField,
+  Block,
+  AllFields,
+  CustomSelect,
+  CustomDate,
+} from "../../types";
 import { sectionType } from "../../utils/store/formComponents";
 
 export const transformField = (
@@ -56,6 +64,8 @@ export const transformField = (
       return transformTextSection(field as Block);
     case Type25.CUSTOM_SELECT:
       return transformCustomSelect(field as CustomSelect);
+    case Type25.CUSTOM_DATE:
+      return transformDateField(field as CustomDate);
     default:
       setSections((prevSections) => {
         return prevSections.map((section) => {

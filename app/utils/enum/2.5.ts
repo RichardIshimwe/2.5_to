@@ -3,4 +3,5 @@ export enum Type25 {
   NID_FETCH = "nid-fetch",
   TEXT_SECTION = "text-section",
   CUSTOM_SELECT = "custom-select",
+  CUSTOM_DATE = "custom-date",
 }

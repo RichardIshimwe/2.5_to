@@ -209,3 +209,37 @@ export interface CustomSelect {
     [property: string]: string;
   };
 }
+
+export interface CustomDate {
+  key: string;
+  type: "custom-date";
+  selected?: boolean;
+  className?: string;
+  hideExpression?: string;
+  templateOptions?: {
+    label?: string;
+    required?: boolean;
+    placeholder?: string;
+    summaryFormatting?: {
+      useLabel?: string;
+      dateFormat?: string;
+      formatType?: string;
+    };
+  };
+}
+
+export interface TransformedDate {
+  key: string;
+  id: string;
+  type: "customdatepicker";
+  props: {
+    label: string;
+    disabled: boolean;
+    required: boolean;
+    placeholder: string;
+  };
+  expressions: Record<string, unknown>;
+  validation: {
+    messages: Record<string, unknown>;
+  };
+}
