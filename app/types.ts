@@ -99,6 +99,7 @@ export interface TemplateOptions {
   fetchedPropertiesToPrefill?: FetchedProperty[];
   icon?: string;
   label?: string;
+  disabled?: boolean;
 }
 
 export interface NidInputField {
@@ -160,3 +161,51 @@ export type Section = {
   fieldGroupClassName?: string;
   others: number[];
 };
+
+export interface TransformedDropdown {
+  key: string;
+  id: string;
+  type: "customdropdown";
+  props: {
+    label: string;
+    placeholder: string;
+    disabled: boolean;
+    required: boolean;
+    options: {
+      value: string;
+      label: string;
+    }[];
+    multiple?: boolean;
+    bindValue?: string;
+    bindLabel?: string;
+  };
+  expressions: Record<string, unknown>;
+  validation: {
+    messages: Record<string, unknown>;
+  };
+}
+
+export interface CustomSelect {
+  key: string;
+  type: "custom-select";
+  className?: string;
+  hideExpression?: string;
+  templateOptions?: {
+    disabled?: boolean;
+    label?: string;
+    placeholder?: string;
+    required?: boolean;
+    summarySection?: string;
+    summaryFormatting?: {
+      useLabel?: string;
+      formatType?: string;
+    };
+    options: {
+      name: string;
+      value: string;
+    }[];
+  };
+  expressionProperties?: {
+    [property: string]: string;
+  };
+}
